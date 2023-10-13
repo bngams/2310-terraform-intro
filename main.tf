@@ -27,7 +27,6 @@ resource "docker_image" "wordpress" {
 resource "docker_container" "db" {
   name  = var.db_host
   image = docker_image.mariadb.image_id
-  restart = "always"
   network_mode = var.network
   mounts {
     type = "volume"
@@ -68,4 +67,19 @@ resource "docker_container" "wp" {
      "WORDPRESS_DB_PASSWORD=${var.db_user_pwd}"
   ]
 
+}
+
+
+resource "docker_image" "ubuntu" {
+  name = "ubuntu:latest"
+}
+
+module "docker_container_qos" {
+  # providers = {
+  #   docker = docker
+  # }
+  source = "./modules/docker_container_qos"
+  name  = "ubuntu-foo"
+  image = docker_image.ubuntu.image_id
+  command = ["sleep", "infinity"]  
 }
