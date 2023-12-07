@@ -12,6 +12,7 @@ terraform {
 
 # providers
 # plugins - "driver" - registry
-# provider "docker" {
+provider "docker" {
+  alias = "my_docker"
   # host = "unix:///var/run/docker.sock"
-# }
+}

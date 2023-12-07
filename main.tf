@@ -1,16 +1,18 @@
+# We can put some code in separate files (see ./networks.tf)
 # network
-resource "docker_network" "private_network" {
-  name = var.network
-}
- 
-# volume db
-resource "docker_volume" "wp_vol_db" {
-  name = var.db_volume
-}
- 
-# volumes fichiers wp
-resource "docker_volume" "wp_vol_files" {
-  name = var.wp_volume
+# resource "docker_network" "private_network" {
+#   name = var.network
+# }
+
+# or in modules
+module "docker_volumes" {
+  source = "./modules/docker_volumes"
+  db_volume = var.db_volume
+  wp_volume = var.wp_volume
+  # we can pass specific providers config to child module
+  providers = { 
+    childdocker = docker.my_docker
+  }
 }
 
 # image maria
@@ -33,7 +35,13 @@ resource "docker_container" "db" {
     target = "/var/lib/mysql"
     source = var.db_volume
   }
+  #  healthcheck {
+  #   test =["CMD", ""] 
+  # }
+  # wait , timeout
   # complete values
+  # resources limits... 
+  # qa container 
   env = [
      "MYSQL_ROOT_PASSWORD=${var.db_root_pwd}",
      "MYSQL_DATABASE=${var.db_name}",
@@ -41,6 +49,7 @@ resource "docker_container" "db" {
      "MYSQL_PASSWORD=${var.db_user_pwd}"
   ]
 
+  # depends_on = [docker_image.mariadb, docker_volume.wp_db_vol, ...] 
 }
 
  
@@ -66,7 +75,13 @@ resource "docker_container" "wp" {
      "WORDPRESS_DB_USER=${var.db_user}",
      "WORDPRESS_DB_PASSWORD=${var.db_user_pwd}"
   ]
-
+  #  healthcheck {
+  #   test =["CMD", ""] 
+  # }
+  # wait , timeout
+  # complete values
+  # resources limits... 
+  # qa container 
 }
 
 
@@ -79,7 +94,7 @@ module "docker_container_qos" {
   #   docker = docker
   # }
   source = "./modules/docker_container_qos"
-  name  = "ubuntu-foo"
+  name  = "ubuntu-foo-qos"
   image = docker_image.ubuntu.image_id
   command = ["sleep", "infinity"]  
 }
