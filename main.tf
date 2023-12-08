@@ -9,6 +9,7 @@ module "docker_volumes" {
   source = "./modules/docker_volumes"
   db_volume = var.db_volume
   wp_volume = var.wp_volume
+  all_volumes = [ "vol1", "vol2" ]
   # we can pass specific providers config to child module
   providers = { 
     childdocker = docker.my_docker
