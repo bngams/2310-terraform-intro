@@ -10,10 +10,6 @@ module "docker_volumes" {
   db_volume = var.db_volume
   wp_volume = var.wp_volume
   all_volumes = [ "vol1", "vol2" ]
-  # we can pass specific providers config to child module
-  providers = { 
-    childdocker = docker.my_docker
-  }
 }
 
 # image maria
@@ -85,17 +81,3 @@ resource "docker_container" "wp" {
   # qa container 
 }
 
-
-resource "docker_image" "ubuntu" {
-  name = "ubuntu:latest"
-}
-
-module "docker_container_qos" {
-  # providers = {
-  #   docker = docker
-  # }
-  source = "./modules/docker_container_qos"
-  name  = "ubuntu-foo-qos"
-  image = docker_image.ubuntu.image_id
-  command = ["sleep", "infinity"]  
-}

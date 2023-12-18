@@ -1,7 +1,7 @@
 # Set the required provider
 terraform {
   required_providers {
-    childdocker = {
+    docker = {
       source  = "kreuzwerker/docker"
       # version = ">= 3.0.1"
     }
